@@ -43,7 +43,7 @@ pub fn main() {
     let commitment = kzg_instance.commit(&poly);
 
     // generate three random points and open the polynomial at those points
-    let points: Vec<Fr> = (0..3).map(|_| Fr::rand(&mut rng)).collect();
+    let points: Vec<Fr> = (0..10).map(|_| Fr::rand(&mut rng)).collect();
     let pi = kzg_instance.multi_open(&poly, &points);
 
     // evaluate the polynomial at those points
@@ -70,3 +70,5 @@ pub fn main() {
     sp1_zkvm::io::commit(&a);
     sp1_zkvm::io::commit(&b);
 }
+
+// for 3 points cyplrs = 1,298,386,543 cycles
