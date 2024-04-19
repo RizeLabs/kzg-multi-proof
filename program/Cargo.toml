@@ -1,0 +1,14 @@
+[workspace]
+[package]
+version = "0.1.0"
+name = "sp1-multiProof-program"
+edition = "2021"
+
+[dependencies]
+sp1-zkvm = { git = "https://github.com/succinctlabs/sp1.git" }
+ark-std = "0.4"
+ark-ec = "0.4"
+ark-ff = "0.4"
+ark-bls12-381 = "0.4"
+rand = "0.8.5"
+
