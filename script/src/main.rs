@@ -36,7 +36,9 @@ impl <E:Pairing> KZG<E> {
 }
 fn main() {
     // Setup a tracer for logging.
-    utils::setup_tracer();
+    // utils::setup_tracer();
+    // utils::setup_tracer();
+    utils::setup_logger();
 
 
     let mut rng = ark_std::test_rng();
