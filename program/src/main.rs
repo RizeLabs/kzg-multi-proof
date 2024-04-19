@@ -43,7 +43,7 @@ pub fn main() {
     let commitment = kzg_instance.commit(&poly);
 
     // generate three random points and open the polynomial at those points
-    let points: Vec<Fr> = (0..100).map(|_| Fr::rand(&mut rng)).collect();
+    let points: Vec<Fr> = (0..10).map(|_| Fr::rand(&mut rng)).collect();
     let pi = kzg_instance.multi_open(&poly, &points);
 
     // evaluate the polynomial at those points
