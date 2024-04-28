@@ -11,4 +11,6 @@ ark-ec = "0.4"
 ark-ff = "0.4"
 ark-bls12-381 = "0.4"
 rand = "0.8.5"
+ndarray = { version = "0.15.6", features = ["serde"] }
+num-integer = "0.1.46"
 
