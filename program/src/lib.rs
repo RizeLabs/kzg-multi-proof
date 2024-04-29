@@ -1,3 +1,13 @@
+pub mod conv_layer;
+pub mod mxpl_layer;
+pub mod dense_layer;
+pub mod layer;
+pub mod cnn;
+pub mod util;
+pub mod activation;
+// pub mod fiftystates;
+pub mod optimizer;
+pub mod mnist;
 use std::f32::consts::E;
 
 use ndarray::Array2;

@@ -9,6 +9,11 @@ pub mod utils;
 use kzg::KZG;
 use ndarray::{Array, Array2};
 use rand::distributions::{Distribution, Uniform};
+use sp1_multiProof_program::activation::Activation;
+use sp1_multiProof_program::cnn::{Hyperparameters, CNN};
+use sp1_multiProof_program::mnist::{get_random_test_image, load_mnist};
+use sp1_multiProof_program::optimizer::OptimizerAlg;
+use sp1_multiProof_program::util::{TrainImage, TrainingData};
 use sp1_multiProof_program::{linear_forward_activation, ActivationCache, LinearCache};
 
 use std::ops::Mul;
@@ -17,6 +22,7 @@ use ark_bls12_381::{Bls12_381, Fr, G1Projective as G1, G2Projective as G2};
 use rand::seq::IteratorRandom;
 use ark_ff::Field;
 use ark_ec::pairing::Pairing;
+
 
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -107,16 +113,50 @@ pub fn main() {
     // let 
     println!("cycle-tracker-start: loading");
 
-    let dnn = DeepNeuralNetwork {
-        layers: vec![3,10, 10, 10, 1],
-        learning_rate: 0.01,
+    // let dnn = DeepNeuralNetwork {
+    //     layers: vec![3,10, 50, 100, 50, 10, 1], //cycles=7867947
+    //     learning_rate: 0.01,
+    // };
+    // let x = Array::from_shape_vec((3, 1), vec![0.1, 0.2, 0.7]).unwrap();
+    // let parameters = dnn.initialize_parameters();
+    // let (al, caches) = dnn.forward(&x, &parameters);
+    // println!("Output: {:?}", al);
+
+    // let data = load_mnist("./data/");
+    let data = TrainingData{
+        trn_img: vec![
+            TrainImage::Image(Array::from_shape_vec((28, 28, 1), vec![0.0; 28*28]).unwrap())
+        ],
+        trn_lbl: vec![0],
+        tst_img: vec![],
+        tst_lbl: vec![],
+        rows: 28,
+        cols: 28,
+        trn_size: 1,
+        tst_size: 0,
+        classes: (0..1).enumerate().collect(),
     };
-    let x = Array::from_shape_vec((3, 1), vec![0.1, 0.2, 0.7]).unwrap();
-    let parameters = dnn.initialize_parameters();
-    let (al, caches) = dnn.forward(&x, &parameters);
-    println!("Output: {:?}", al);
-    // let n = sp1_zkvm::io::read();
-    // let kzg_instance = sp1_zkvm::io::read();
+
+    // // Set hyperparameters
+    let hyperparameters = Hyperparameters {
+        batch_size: 10,
+        epochs: 10,
+        optimizer: OptimizerAlg::SGD(0.1),
+        ..Hyperparameters::default()
+    };
+
+    // // Create CNN architecture
+    let mut cnn = CNN::new(data, hyperparameters);
+    // cnn.set_input_shape(vec![28, 28, 3]);
+    // cnn.add_conv_layer(8, 3);
+    // cnn.add_mxpl_layer(2);
+    // cnn.add_dense_layer(128, Activation::Relu, Some(0.25));
+    // cnn.add_dense_layer(64, Activation::Relu, Some(0.25));
+    // cnn.add_dense_layer(10, Activation::Softmax, None);
+    // let data2 = load_mnist("./data/");
+    // cnn.forward_propagate(get_random_test_image(&data2).0, false);
+    // // let n = sp1_zkvm::io::read();
+    // // let kzg_instance = sp1_zkvm::io::read();
 
     // let mut rng = ark_std::test_rng();
     // let degree = 16;
