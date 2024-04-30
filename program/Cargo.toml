@@ -11,4 +11,5 @@ ark-ec = "0.4"
 ark-ff = "0.4"
 ark-bls12-381 = "0.4"
 rand = "0.8.5"
+lib = {path = "../lib"}
 

@@ -14,6 +14,8 @@ use ark_bls12_381::{Bls12_381, Fr, G1Projective as G1, G2Projective as G2};
 use rand::seq::IteratorRandom;
 use ark_ff::Field;
 use ark_ec::pairing::Pairing;
+use lib::{SerdeSerializableCommitment, SerdeSerializableG2Commitment, SerdeSerializableLagrangePolynomial, SerdeSerializablePoints, SerdeSerializablePolynomial, SerializableCommitment, SerializableG2Commitment, SerializableLagrangePolynomial, SerializablePoints, SerializablePolynomial};
+
 
 pub fn main() {
     // NOTE:  values of n larger than 186 will overflow the u128 type,
@@ -23,8 +25,19 @@ pub fn main() {
 
     // let 
     println!("cycle-tracker-start: loading");
-    // let n = sp1_zkvm::io::read();
-    // let kzg_instance = sp1_zkvm::io::read();
+    let n: u32 = sp1_zkvm::io::read();
+    let serializable_pvk = sp1_zkvm::io::read::<SerdeSerializablePoints>();
+    let pointsss = SerializablePoints::from(serializable_pvk).0;
+    let serializable_poly = sp1_zkvm::io::read::<SerdeSerializablePolynomial>();
+    let polyyy = SerializablePolynomial::from(serializable_poly).0;
+    let serializable_lag_poly = sp1_zkvm::io::read::<SerdeSerializableLagrangePolynomial>();
+    let lag_poly = SerializableLagrangePolynomial::from(serializable_lag_poly).0;
+    let seriablizable_commitment = sp1_zkvm::io::read::<SerdeSerializableCommitment>();
+    let commitmentt = SerializableCommitment::from(seriablizable_commitment).0;
+    let serializable_zero_comm = sp1_zkvm::io::read::<SerdeSerializableG2Commitment>();
+    let zero_comm = SerializableG2Commitment::from(serializable_zero_comm).0;
+    
+    // let p2 = sp1_zkvm::io::read();
 
     let mut rng = ark_std::test_rng();
     let degree = 16;
@@ -39,11 +52,11 @@ pub fn main() {
     kzg_instance.setup(secret);
 
     // generate a random polynomial and commit it
-    let poly = vec![Fr::rand(&mut rng); degree+1];
-    let commitment = kzg_instance.commit(&poly);
+    let poly = polyyy;
+    let commitment = commitmentt;
 
     // generate three random points and open the polynomial at those points
-    let points: Vec<Fr> = (0..10).map(|_| Fr::rand(&mut rng)).collect();
+    let points: Vec<Fr> = pointsss;
     let pi = kzg_instance.multi_open(&poly, &points);
 
     // evaluate the polynomial at those points
@@ -53,7 +66,7 @@ pub fn main() {
     }
 
     // verify the proof
-    // assert!(kzg_instance.verify_multi(&points, &values, commitment, pi));
+    assert!(kzg_instance.verify_multi(&points, &values, commitment, pi));
 
     println!("Multi points evaluation verified!");
     let mut a: u128 = 0;

@@ -66,6 +66,30 @@ impl <E:Pairing> KZG<E> {
         pi
     }
 
+    pub fn multi_open_with_lagrange(&self, poly: &[E::ScalarField], points: &[E::ScalarField], lagrange: &[E::ScalarField]) -> E::G1 {
+        // perform Lagrange interpolation on points
+        
+        let mut lagrange_poly = lagrange.to_vec();
+
+        // numerator is the difference between the polynomial and the Lagrange interpolation
+        let mut numerator = Vec::with_capacity(poly.len());
+        for (coeff1, coeff2) in poly.iter().zip(lagrange_poly.as_slice()) {
+            numerator.push(*coeff1 - coeff2);
+        }
+
+        // get quotient by dividing numerator by denominator
+        let quotient = div(&numerator, &[-points[0], E::ScalarField::ONE]).unwrap();
+
+        // calculate pi as proof (quotient multiplied by CRS)
+        let mut pi = self.g1.mul(E::ScalarField::ZERO);
+        for i in 0..quotient.len() {
+            pi += self.crs_g1[i] * quotient[i];
+        }
+
+        // return pi
+        pi
+    }
+
     pub fn multi_open(&self, poly: &[E::ScalarField], points: &[E::ScalarField]) -> E::G1 {
         // denominator is a polynomial where all its root are points to be evaluated (zero poly)
         let mut zero_poly = vec![-points[0], E::ScalarField::ONE];
